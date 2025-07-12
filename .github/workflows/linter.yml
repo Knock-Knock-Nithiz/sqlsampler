@@ -1,4 +1,3 @@
----
 name: Lint
 
 on:
@@ -15,36 +14,60 @@ permissions:
   statuses: write
 
 jobs:
-  lint_postgres:
+  # ✅ Optional Super-Linter job only for general files (not SQL)
+  lint_general:
+    name: Lint (Markdown, YAML, etc.)
     runs-on: ubuntu-latest
-    name: Lint Postgres SQL
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Run Super-Linter (Postgres)
+      - name: Run Super-Linter (General Files Only)
         uses: super-linter/super-linter@v7.4.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SQLFLUFF_DIALECT: postgres
-          VALIDATE_SQL: true
-          FILTER_REGEX_INCLUDE: postgres/
+          VALIDATE_SQL: false  # ❌ Skip SQL from here
+          VALIDATE_ALL_CODEBASE: true
 
-  lint_snowflake:
+  # ✅ Custom SQLFluff Job – Postgres
+  sqlfluff_postgres:
+    name: SQLFluff – Postgres
     runs-on: ubuntu-latest
-    name: Lint Snowflake SQL
 
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Run Super-Linter (Snowflake)
-        uses: super-linter/super-linter@v7.4.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SQLFLUFF_DIALECT: snowflake
-          VALIDATE_SQL: true
-          FILTER_REGEX_INCLUDE: snowflake/
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install SQLFluff
+        run: pip install sqlfluff
+
+      - name: Lint Postgres SQL
+        run: sqlfluff lint postgres/ --dialect postgres
+
+  # ✅ Custom SQLFluff Job – Snowflake
+  sqlfluff_snowflake:
+    name: SQLFluff – Snowflake
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install SQLFluff
+        run: pip install sqlfluff
+
+      - name: Lint Snowflake SQL
+        run: sqlfluff lint snowflake/ --dialect snowflake
