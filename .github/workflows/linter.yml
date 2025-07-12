@@ -1,4 +1,6 @@
+---
 name: Lint
+
 on:
   push:
     branches:
@@ -6,23 +8,26 @@ on:
   pull_request:
     branches:
       - main
-permissions: {}
+
+permissions:
+  contents: read
+  packages: read
+  statuses: write
+
 jobs:
   lint:
     name: Lint
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: read
-      statuses: write
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Super-linter
+
+      - name: Run Super-Linter
         uses: super-linter/super-linter@v7.4.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # Optionally, configure SQL dialect for SQLFluff
-          # SQL_LINTER_DIALECT: 'snowflake'
+          SQLFLUFF_DIALECT: postgres
+          VALIDATE_ALL_CODEBASE: tru
