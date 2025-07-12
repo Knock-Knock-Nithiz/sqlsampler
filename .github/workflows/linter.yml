@@ -15,19 +15,36 @@ permissions:
   statuses: write
 
 jobs:
-  lint:
-    name: Lint
+  lint_postgres:
     runs-on: ubuntu-latest
+    name: Lint Postgres SQL
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Run Super-Linter
+      - name: Run Super-Linter (Postgres)
         uses: super-linter/super-linter@v7.4.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SQLFLUFF_DIALECT: postgres
-          VALIDATE_ALL_CODEBASE: true
+          VALIDATE_SQL: true
+          FILTER_REGEX_INCLUDE: postgres/
+
+  lint_snowflake:
+    runs-on: ubuntu-latest
+    name: Lint Snowflake SQL
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run Super-Linter (Snowflake)
+        uses: super-linter/super-linter@v7.4.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SQLFLUFF_DIALECT: snowflake
+          VALIDATE_SQL: true
+          FILTER_REGEX_INCLUDE: snowflake/
