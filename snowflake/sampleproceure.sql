@@ -6,5 +6,4 @@ $$
 BEGIN
   RETURN message;
 END;
-$$
-;
+$$;
