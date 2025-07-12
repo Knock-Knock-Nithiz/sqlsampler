@@ -30,4 +30,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SQLFLUFF_DIALECT: postgres
-          VALIDATE_ALL_CODEBASE: tru
+          VALIDATE_ALL_CODEBASE: true
