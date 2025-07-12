@@ -14,7 +14,6 @@ permissions:
   statuses: write
 
 jobs:
-  # ✅ Optional Super-Linter job only for general files (not SQL)
   lint_general:
     name: Lint (Markdown, YAML, etc.)
     runs-on: ubuntu-latest
@@ -29,10 +28,9 @@ jobs:
         uses: super-linter/super-linter@v7.4.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          VALIDATE_SQL: false  # ❌ Skip SQL from here
+          VALIDATE_SQL: false
           VALIDATE_ALL_CODEBASE: true
 
-  # ✅ Custom SQLFluff Job – Postgres
   sqlfluff_postgres:
     name: SQLFluff – Postgres
     runs-on: ubuntu-latest
@@ -44,7 +42,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: Install SQLFluff
         run: pip install sqlfluff
@@ -52,7 +50,6 @@ jobs:
       - name: Lint Postgres SQL
         run: sqlfluff lint postgres/ --dialect postgres
 
-  # ✅ Custom SQLFluff Job – Snowflake
   sqlfluff_snowflake:
     name: SQLFluff – Snowflake
     runs-on: ubuntu-latest
@@ -64,7 +61,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: Install SQLFluff
         run: pip install sqlfluff
